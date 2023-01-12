@@ -6,16 +6,32 @@ import pyttsx3
 import random
 import time
 
+class Music: 
+    enabled: bool
+    song: str
+    def __init__(self) -> None:
+        self.enabled = False
+        self.song = ""
+    def isEnabled(self): return self.enabled
+    def getSong(self): return self.song
+    def playSong(self, song):
+        if (song == "rickroll"): 
+            winsound.PlaySound("rickroll.wav") 
+        else: 
+            # search for a song
+            pass 
+        
+
 
 class Settings:
     difficulty = ""
     players = 1
-    music = "None"
+    music: Music
 
     def __init__(self) -> None:
         self.difficulty = "medium"
         self.players = 1
-        self.music = "0"
+        self.music = Music()
 
     def viewDifficulty(self):
         return self.difficulty
@@ -23,54 +39,32 @@ class Settings:
     def viewPlayers(self):
         return self.players
 
-    def viewMusic(self):
-        return self.music
-
     def updateDifficulty(self, newValue):
         self.difficulty = newValue
 
-    def updateMusic(self, fileName):
-        winsound.PlaySound(None)
-        winsound.PlaySound(fileName)
-        return
-
 
 class Player:
-    playerName = ""
-    playerFile = ""
-
+    playerName: str
+    playerFile: str
     def __init__(self, name, file) -> None:
         self.playerName = name
         self.playerFile = file
-
-    def viewName(self):
-        return self.playerName
-
-    def getFile(self):
-        return self.playerFile
-
-    def updateName(self, newName):
-        self.playerName = newName
-
-    def updateFile(self, newFile):
-        self.playerFile = newFile
+    def viewName(self): return self.playerName
+    def getFile(self): return self.playerFile
+    def updateName(self, newName): self.playerName = newName
+    def updateFile(self, newFile): self.playerFile = newFile
 
 
 class Ball:
     img: str
-
     def __init__(self, img) -> None:
         self.img = img
-
-    def respawn(self):
-        pass
-
-    def moveDown(self):
-        pass
+    def respawn(self): pass
+    def moveDown(self): pass
 
 
 class Game:
-    screen = ""
+    screen: str
     _settings: Settings
     players: List[Player]
     balls: List[Ball]
@@ -90,12 +84,54 @@ class Game:
     def addPlayer(self, name, file):
         self.players.append(Player(name, file))
 
+    def defaultScreen(self):
+        defaultScreen = GraphWin("Dodge The Balls", 500, 500)
+
+        defaultScreen
+
+        defaultScreen.setCoords(
+            -(defaultScreen.width / 2),
+            -(defaultScreen.height / 2),
+            (defaultScreen.width / 2),
+            (defaultScreen.height / 2)
+        )
+
+        cir = Rectangle(Point(0,0), Point(-10,10))
+        cir.setFill('red')
+        cir.clicked()
+        cir.draw(defaultScreen)
+
+        defaultScreen.getMouse()
+        defaultScreen.close()
+
+    def gameScreen(self):
+        gameScreen = GraphWin("Game Screen")
+
+        gameScreen.getMouse()
+        gameScreen.close()
+
     def settings(self):
-        pass
+        settingsScreen = GraphWin("Settings", 500, 500)
+        
+        settingsScreen.setCoords(
+            -(settingsScreen.width / 2),
+            -(settingsScreen.height / 2),
+            (settingsScreen.width / 2),
+            (settingsScreen.height / 2)
+        )
+
+
+        settingsScreen.getMouse()
+        settingsScreen.close()
+
 
     def instructions(self):
-        pass
+        instructionsScreen = GraphWin("Instructions", 500, 500)
+
+        instructionsScreen.getMouse()
+        instructionsScreen.close()
 
 
 while True:
-    pass
+    game = Game()
+    game.defaultScreen()
