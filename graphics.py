@@ -263,7 +263,7 @@ class GraphWin(tk.Canvas):
         self.__checkOpen()
         self.config(bg=color)
         self.__autoflush()
-
+        return self
     def setCoords(self, x1, y1, x2, y2):
         """Set coordinates of window to run from (x1,y1) in the
         lower-left corner to (x2,y2) in the upper-right corner."""
@@ -472,14 +472,17 @@ class GraphicsObject:
     def setFill(self, color):
         """Set interior color to color"""
         self._reconfig("fill", color)
+        return self
 
     def setOutline(self, color):
         """Set outline color to color"""
         self._reconfig("outline", color)
+        return self
 
     def setWidth(self, width):
         """Set line weight to width"""
         self._reconfig("width", width)
+        return self
 
     def draw(self, graphwin):
 
@@ -533,6 +536,7 @@ class GraphicsObject:
             if canvas.autoflush:
                 _root.update()
 
+        return self
     def _reconfig(self, option, setting):
         # Internal method for changing configuration of the object
         # Raises an error if the option does not exist in the config
@@ -779,6 +783,7 @@ class Text(GraphicsObject):
 
     def setText(self, text):
         self._reconfig("text", text)
+        return self
 
     def getText(self):
         return self.config["text"]
@@ -792,6 +797,7 @@ class Text(GraphicsObject):
             self._reconfig("font", (face, s, b))
         else:
             raise GraphicsError(BAD_OPTION)
+        return self
 
     def setSize(self, size):
         if 5 <= size <= 36:
@@ -799,6 +805,7 @@ class Text(GraphicsObject):
             self._reconfig("font", (f, size, b))
         else:
             raise GraphicsError(BAD_OPTION)
+        return self
 
     def setStyle(self, style):
         if style in ["bold", "normal", "italic", "bold italic"]:
@@ -806,9 +813,11 @@ class Text(GraphicsObject):
             self._reconfig("font", (f, s, style))
         else:
             raise GraphicsError(BAD_OPTION)
+        return self
 
     def setTextColor(self, color):
         self.setFill(color)
+        return self
 
 
 class Entry(GraphicsObject):
@@ -863,11 +872,13 @@ class Entry(GraphicsObject):
 
     def setText(self, t):
         self.text.set(t)
+        return self
 
     def setFill(self, color):
         self.fill = color
         if self.entry:
             self.entry.config(bg=color)
+        return self
 
     def _setFontComponent(self, which, value):
         font = list(self.font)
@@ -881,23 +892,27 @@ class Entry(GraphicsObject):
             self._setFontComponent(0, face)
         else:
             raise GraphicsError(BAD_OPTION)
+        return self
 
     def setSize(self, size):
         if 5 <= size <= 36:
             self._setFontComponent(1, size)
         else:
             raise GraphicsError(BAD_OPTION)
+        return self
 
     def setStyle(self, style):
         if style in ["bold", "normal", "italic", "bold italic"]:
             self._setFontComponent(2, style)
         else:
             raise GraphicsError(BAD_OPTION)
+        return self
 
     def setTextColor(self, color):
         self.color = color
         if self.entry:
             self.entry.config(fg=color)
+        return self
 
 
 class Image(GraphicsObject):
