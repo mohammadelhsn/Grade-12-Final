@@ -10,7 +10,6 @@ try:
 except ModuleNotFoundError:
     os.system("pip install requests")
     import requests
-
 try:
     import pyttsx3
 except ModuleNotFoundError:
@@ -36,7 +35,7 @@ class Music:
         return self.song
 
     def playSong(self, song):
-        pass
+        return self
 
 
 class Settings:
@@ -57,6 +56,7 @@ class Settings:
 
     def updateDifficulty(self, newValue):
         self.difficulty = newValue
+        return self
 
 
 class Player:
@@ -75,9 +75,11 @@ class Player:
 
     def updateName(self, newName):
         self.playerName = newName
+        return self
 
     def updateFile(self, newFile):
         self.playerFile = newFile
+        return self
 
 
 class Ball:
@@ -113,9 +115,10 @@ class Game:
 
     def addPlayer(self, name, file):
         self.players.append(Player(name, file))
+        return self
 
     def defaultScreen(self):
-        defaultScreen = GraphWin("Dodge The Balls", 1000, 500)
+        defaultScreen = GraphWin("Dodge The Balls", 800, 500)
         Image(Point(0, 0), "Settings page.gif").draw(defaultScreen)
         defaultScreen.setCoords(
             -(defaultScreen.width / 2),
@@ -133,10 +136,8 @@ class Game:
         )
         SETTINGS_BUTTON = Rectangle(Point(0, -20), Point(100, -40)).draw(defaultScreen)
         Text(SETTINGS_BUTTON.getCenter(), "SETTINGS").setSize(10).draw(defaultScreen)
-
         while True:
             pt = defaultScreen.getMouse()
-
             if INSTURCTION_BUTTON.clicked(pt):
                 print("Instruction button clicked!")
                 defaultScreen.close()
@@ -152,36 +153,54 @@ class Game:
                 defaultScreen.close()
                 self.gameScreen()
                 break
-
         defaultScreen.close()
 
     def gameScreen(self):
-        gameScreen = GraphWin("Game Screen", 1000, 500)
+        gameScreen = GraphWin("Game Screen", 800, 500)
         Image(Point(0, 0), "Blue Sky.gif").draw(gameScreen)
+
+        while True:
+            # check for keys that are pressed, if they are pressed, move the character around.
+            break
         gameScreen.getMouse()
         gameScreen.close()
 
     def settings(self):
-        settingsScreen = GraphWin("Settings", 1000, 500)
+        settingsScreen = GraphWin("Settings", 800, 500)
         Image(Point(0, 0), "Settings page.gif").draw(settingsScreen)
-
         settingsScreen.setCoords(
             -(settingsScreen.width / 2),
             -(settingsScreen.height / 2),
             (settingsScreen.width / 2),
             (settingsScreen.height / 2),
         )
+        MUSIC_ON = Rectangle(Point(-350, 150), Point(-300, 200)).draw(settingsScreen)
+        MUSIC_OFF = Rectangle(Point(-250, 150), Point(-200, 200)).draw(settingsScreen)
+        Text(MUSIC_ON.getCenter(), "ON").setSize(15).draw(settingsScreen)
+        Text(MUSIC_OFF.getCenter(), "OFF").setSize(15).draw(settingsScreen)
 
-        MUSIC_ON = Rectangle(Point(-450, 180), Point(-400, 200)).draw(settingsScreen)
-        MUSIC_OFF = Rectangle(Point(-400, 180), Point(-350, 200)).draw(settingsScreen)
-        Text(MUSIC_ON.getCenter(), "ON").setSize(10).draw(settingsScreen)
-        Text(MUSIC_OFF.getCenter(), "OFF").setSize(10).draw(settingsScreen)
+        while True:
+            if self._settings.music.isEnabled() == "ON":
+                MUSIC_OFF.setFill("")
+                MUSIC_ON.setFill("orange")
+            else:
+                MUSIC_ON.setFill("")
+                MUSIC_OFF.setFill("orange")
 
-        settingsScreen.getMouse()
-        settingsScreen.close()
+            pt = settingsScreen.getMouse()
+
+            if MUSIC_ON.clicked(pt):
+                print("Music ON Clicked")
+                self._settings.music.enabled = True
+                continue
+            if MUSIC_OFF.clicked(pt):
+                print("Music OFF Clicked")
+                self._settings.music.enabled = False
+                continue
+            continue
 
     def instructions(self):
-        instructionsScreen = GraphWin("Instructions", 1000, 500)
+        instructionsScreen = GraphWin("Instructions", 800, 500)
         Image(Point(0, 0), "Settings page.gif").draw(instructionsScreen)
         instructionsScreen.getMouse()
         instructionsScreen.close()
