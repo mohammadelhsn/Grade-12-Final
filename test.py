@@ -1,12 +1,9 @@
-import threading
+from winsound import *
+from time import sleep
+import pathlib
 
-
-def setInterval(func, sec: int):
-    def func_wrapper():
-        setInterval(func, sec)
-        func()
-
-    t = threading.Timer(sec, func_wrapper)
-    t.start()
-    return t
-
+print(str(pathlib.Path(__file__).parent / "rickroll.wav"))
+PlaySound("rickroll.wav", SND_ASYNC | SND_FILENAME | SND_LOOP)
+while True:
+    sleep(5)
+    print("hi")
