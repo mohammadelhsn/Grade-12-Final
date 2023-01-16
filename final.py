@@ -1,9 +1,28 @@
+#############################################################################
+# Author: Mohammad El-Hassan
+# Description: Final Project
+# Date Created: 01/16/2023
+# Date Modified: 01/16/2023
+#############################################################################
+
 from typing import List
 from graphics import *
+import threading
 import winsound
 import random
 import time
 import os
+
+
+def setInterval(func, sec: int):
+    def func_wrapper():
+        setInterval(func, sec)
+        func()
+
+    t = threading.Timer(sec, func_wrapper)
+    t.start()
+    return t
+
 
 try:
     import requests
@@ -39,8 +58,8 @@ class Music:
 
 
 class Settings:
-    difficulty = ""
-    players = 1
+    difficulty: str
+    players: int
     music: Music
 
     def __init__(self) -> None:
@@ -178,7 +197,12 @@ class Game:
         MUSIC_OFF = Rectangle(Point(-250, 150), Point(-200, 200)).draw(settingsScreen)
         Text(MUSIC_ON.getCenter(), "ON").setSize(15).draw(settingsScreen)
         Text(MUSIC_OFF.getCenter(), "OFF").setSize(15).draw(settingsScreen)
-
+        AFTERPARTY = Rectangle(Point(-350, 50), Point(-250, 100))
+        BIGGESTBIRD = Rectangle(Point(-200, 50), Point(-100, 100))
+        RICKROLL = Rectangle(Point(-50, 50), Point(50, 100))
+        at = Text(AFTERPARTY.getCenter(), "AFTER PARTY").setSize(10)
+        bbt = Text(BIGGESTBIRD.getCenter(), "BIGGEST BIRD").setSize(10)
+        rrt = Text(RICKROLL.getCenter(), "RICK ROLL").setSize(10)
         while True:
             if self._settings.music.isEnabled() == "ON":
                 MUSIC_OFF.setFill("")
@@ -186,17 +210,33 @@ class Game:
             else:
                 MUSIC_ON.setFill("")
                 MUSIC_OFF.setFill("orange")
-
             pt = settingsScreen.getMouse()
 
             if MUSIC_ON.clicked(pt):
                 print("Music ON Clicked")
                 self._settings.music.enabled = True
+                AFTERPARTY.draw(settingsScreen)
+                BIGGESTBIRD.draw(settingsScreen)
+                RICKROLL.draw(settingsScreen)
+                at.draw(settingsScreen)
+                bbt.draw(settingsScreen)
+                rrt.draw(settingsScreen)
                 continue
             if MUSIC_OFF.clicked(pt):
                 print("Music OFF Clicked")
                 self._settings.music.enabled = False
+                AFTERPARTY.undraw()
+                BIGGESTBIRD.undraw()
+                RICKROLL.undraw()
+                at.undraw()
+                bbt.undraw()
+                rrt.undraw()
                 continue
+            if (AFTERPARTY.clicked(pt)): 
+                print("after party clicked") 
+                self._settings.music.playSong("afterparty.wav")
+            if (BIGGESTBIRD.clicked(pt)): self._settings.music.playSong("biggestbird.wav")
+            if (RICKROLL.clicked(pt)): self._settings.music.playSong("rickroll.wav")
             continue
 
     def instructions(self):

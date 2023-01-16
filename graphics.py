@@ -516,7 +516,9 @@ class GraphicsObject:
                 _root.update()
         self.canvas = None
         self.id = None
-
+    def isDrawn(self): 
+        if not self.canvas: False
+        else: return True
     def move(self, dx, dy):
 
         """move object dx units in x direction and dy units in y
