@@ -264,6 +264,7 @@ class GraphWin(tk.Canvas):
         self.config(bg=color)
         self.__autoflush()
         return self
+
     def setCoords(self, x1, y1, x2, y2):
         """Set coordinates of window to run from (x1,y1) in the
         lower-left corner to (x2,y2) in the upper-right corner."""
@@ -402,7 +403,6 @@ class GraphWin(tk.Canvas):
             item.undraw()
             item.draw(self)
         self.update()
-    
 
 
 class Transform:
@@ -516,9 +516,13 @@ class GraphicsObject:
                 _root.update()
         self.canvas = None
         self.id = None
-    def isDrawn(self): 
-        if not self.canvas: False
-        else: return True
+
+    def isDrawn(self):
+        if not self.canvas:
+            False
+        else:
+            return True
+
     def move(self, dx, dy):
 
         """move object dx units in x direction and dy units in y
@@ -538,6 +542,7 @@ class GraphicsObject:
             if canvas.autoflush:
                 _root.update()
         return self
+
     def _reconfig(self, option, setting):
         # Internal method for changing configuration of the object
         # Raises an error if the option does not exist in the config
@@ -636,27 +641,38 @@ class Rectangle(_BBox):
         other = Rectangle(self.p1, self.p2)
         other.config = self.config.copy()
         return other
+
     def clicked(self, click: Point):
         P1: Point = self.getP1()
         P2: Point = self.getP2()
-        if (P1.x >= 0): 
-            if click.getX() >= P1.getX() and click.getX() <= P2.getX(): 
-                if (P2.y > 0): 
-                    if click.getY() >= P1.getY() and click.getY() <= P2.getY():return True
-                    else: return False
-                else: 
-                    if click.getY() <= P1.getY() and click.getY() >= P2.getY(): return True
-                    else: return False
-            else: return False
-        if (P1.x < 0): 
-            if click.getX() >= P1.getX() and click.getX() <= P2.getX(): 
-                if (P2.y > 0):
-                    if click.getY() >= P1.getY() and click.getY() <= P2.getY():return True
-                    else: return False
-                else: 
-                    if click.getY() <= P1.getY() and click.getY() >= P2.getY(): return True
-                    else: return False
-            else: return False
+        if P1.x >= 0:
+            if click.getX() >= P1.getX() and click.getX() <= P2.getX():
+                if P2.y > 0:
+                    if click.getY() >= P1.getY() and click.getY() <= P2.getY():
+                        return True
+                    else:
+                        return False
+                else:
+                    if click.getY() <= P1.getY() and click.getY() >= P2.getY():
+                        return True
+                    else:
+                        return False
+            else:
+                return False
+        if P1.x < 0:
+            if click.getX() >= P1.getX() and click.getX() <= P2.getX():
+                if P2.y > 0:
+                    if click.getY() >= P1.getY() and click.getY() <= P2.getY():
+                        return True
+                    else:
+                        return False
+                else:
+                    if click.getY() <= P1.getY() and click.getY() >= P2.getY():
+                        return True
+                    else:
+                        return False
+            else:
+                return False
 
 
 class Oval(_BBox):
