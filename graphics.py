@@ -403,6 +403,12 @@ class GraphWin(tk.Canvas):
             item.undraw()
             item.draw(self)
         self.update()
+    def setImage(self, img: str):
+        Image(Point(0,0), img).draw(self)
+        return self
+    def zero(self): 
+        self.setCoords((-self.width / 2), (-self.height / 2), (self.width / 2), (self.height /2 ))
+        return self
 
 
 class Transform:
@@ -647,7 +653,7 @@ class Rectangle(_BBox):
         P2: Point = self.getP2()
         if P1.x >= 0:
             if click.getX() >= P1.getX() and click.getX() <= P2.getX():
-                if P2.y > 0:
+                if P2.y >= 0:
                     if click.getY() >= P1.getY() and click.getY() <= P2.getY():
                         return True
                     else:
@@ -661,7 +667,7 @@ class Rectangle(_BBox):
                 return False
         if P1.x < 0:
             if click.getX() >= P1.getX() and click.getX() <= P2.getX():
-                if P2.y > 0:
+                if P2.y >= 0:
                     if click.getY() >= P1.getY() and click.getY() <= P2.getY():
                         return True
                     else:
