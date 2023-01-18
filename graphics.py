@@ -475,22 +475,22 @@ class GraphicsObject:
             config[option] = DEFAULT_CONFIG[option]
         self.config = config
 
-    def setFill(self, color):
+    def setFill(self, color: str):
         """Set interior color to color"""
         self._reconfig("fill", color)
         return self
 
-    def setOutline(self, color):
+    def setOutline(self, color: str):
         """Set outline color to color"""
         self._reconfig("outline", color)
         return self
 
-    def setWidth(self, width):
+    def setWidth(self, width: int):
         """Set line weight to width"""
         self._reconfig("width", width)
         return self
 
-    def draw(self, graphwin):
+    def draw(self, graphwin: GraphWin):
 
         """Draw the object in graphwin, which should be a GraphWin
         object.  A GraphicsObject may only be drawn into one
@@ -529,7 +529,7 @@ class GraphicsObject:
         else:
             return True
 
-    def move(self, dx, dy):
+    def move(self, dx: float, dy: float):
 
         """move object dx units in x direction and dy units in y
         direction"""
@@ -586,7 +586,7 @@ class Point(GraphicsObject):
         x, y = canvas.toScreen(self.x, self.y)
         return canvas.create_rectangle(x, y, x + 1, y + 1, options)
 
-    def _move(self, dx, dy):
+    def _move(self, dx: float, dy: float):
         self.x = self.x + dx
         self.y = self.y + dy
 
@@ -781,7 +781,7 @@ class Polygon(GraphicsObject):
 
 
 class Text(GraphicsObject):
-    def __init__(self, p, text):
+    def __init__(self, p: Point, text: str):
         GraphicsObject.__init__(self, ["justify", "fill", "text", "font"])
         self.setText(text)
         self.anchor = p.clone()
@@ -804,7 +804,7 @@ class Text(GraphicsObject):
         other.config = self.config.copy()
         return other
 
-    def setText(self, text):
+    def setText(self, text: str):
         self._reconfig("text", text)
         return self
 
@@ -814,7 +814,7 @@ class Text(GraphicsObject):
     def getAnchor(self):
         return self.anchor.clone()
 
-    def setFace(self, face):
+    def setFace(self, face: str ):
         if face in ["helvetica", "arial", "courier", "times roman"]:
             f, s, b = self.config["font"]
             self._reconfig("font", (face, s, b))
@@ -822,7 +822,7 @@ class Text(GraphicsObject):
             raise GraphicsError(BAD_OPTION)
         return self
 
-    def setSize(self, size):
+    def setSize(self, size: int):
         if 5 <= size <= 36:
             f, s, b = self.config["font"]
             self._reconfig("font", (f, size, b))
@@ -830,7 +830,7 @@ class Text(GraphicsObject):
             raise GraphicsError(BAD_OPTION)
         return self
 
-    def setStyle(self, style):
+    def setStyle(self, style: str):
         if style in ["bold", "normal", "italic", "bold italic"]:
             f, s, b = self.config["font"]
             self._reconfig("font", (f, s, style))
@@ -838,7 +838,7 @@ class Text(GraphicsObject):
             raise GraphicsError(BAD_OPTION)
         return self
 
-    def setTextColor(self, color):
+    def setTextColor(self, color: str):
         self.setFill(color)
         return self
 
