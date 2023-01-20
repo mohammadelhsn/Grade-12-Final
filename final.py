@@ -7,7 +7,7 @@
 from winsound import PlaySound, SND_ASYNC, SND_FILENAME, SND_LOOP
 from typing import List
 from graphics import *
-import threading, random, time, os, asyncio
+import threading, random, time, os
 
 def setInterval(func, sec: int):
     def func_wrapper():
@@ -153,8 +153,7 @@ class Ball:
             self.ball.anchor.y = 250
             self.draw(screen)
         else:
-            if (self.speed):
-                self.ball.move(0, self.speed)
+            if (self.speed): self.ball.move(0, self.speed)
             else: self.ball.move(0,-10)
     def hasCollided(self, player: Player):
         if (self.ball.anchor.x == player.player.anchor.x and self.ball.anchor.y == player.player.anchor.y): return True
