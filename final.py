@@ -70,6 +70,7 @@ class Player:
         self.player = Image(Point(0, -210), files[2])
         self.win = win
         self.players = []
+        self.lives = 0
 
         for img in self.playerFile:
             self.players.append(Image(Point(0,0), img))
@@ -77,7 +78,7 @@ class Player:
         self.player.draw(self.win)
         return self
 
-    async def movement(self):
+    def movement(self):
         if self.win.keys.get("a"):
             if ((self.player.anchor.x - 10) <= -400): return 
             if "Giga" in self.playerFile[-2]:
@@ -91,7 +92,7 @@ class Player:
                     self.x = img.anchor.x
                     self.y = img.anchor.y
                     img.draw(self.win)
-                    await asyncio.sleep(0.3)
+                    self.win.update()
                     index += 1 
                     if (index == 3):
                         self.player.anchor.x = self.x
@@ -117,7 +118,7 @@ class Player:
                         self.x = img.anchor.x
                         self.y = img.anchor.y
                         img.draw(self.win)
-                        await asyncio.sleep(0.3)
+                        self.win.update()
                         index += 1 
                         if (index == 3):
                             self.player.anchor.x = self.x
@@ -130,22 +131,31 @@ class Player:
                 else:
                     index = 0
                     for i in range(4): self.player.move(3, 0)
-        
+
 
 class Ball:
     img: str
+    speed: int
     def __init__(self, img: str) -> None:
         self.img = img
-        self.ball = Image(Point(random.randint(-200, 200), 250), self.img)
+        self.ball = Image(Point(random.randint(-350, 350), 250), self.img)
+        self.speed = 0
     def draw(self, screen: GraphWin):
         self.ball.draw(screen)
+    def setSpeed(self, speed): 
+        self.speed = speed
+        return self
     def moveDown(self, screen):
-        if ((self.ball.anchor.y -10) <= -250):
+        if ((self.ball.anchor.y - (self.speed)) <= -250):
+            game.score += 1
             self.ball.undraw()
             self.ball.anchor.x = random.randint(-350, 350)
             self.ball.anchor.y = 250
             self.draw(screen)
-        else: self.ball.move(0, -10)
+        else:
+            if (self.speed):
+                self.ball.move(0, self.speed)
+            else: self.ball.move(0,-10)
     def hasCollided(self, player: Player):
         if (self.ball.anchor.x == player.player.anchor.x and self.ball.anchor.y == player.player.anchor.y): return True
         else: return False
@@ -190,42 +200,31 @@ class Game:
             if PLAY_BUTTON.clicked(pt):
                 PLAY_BUTTON.clickAnimation()
                 defaultScreen.close()
-                asyncio.run(self.gameScreen())
+                self.gameScreen()
                 break
         defaultScreen.close()
-    async def gameScreen(self):
-        gameScreen = GraphWin("Game Screen", 800, 500).zero().setImage("Blue Sky.gif")
+    def gameScreen(self):
+        gameScreen = GraphWin("Game Screen", 800, 500, False).zero().setImage("Blue Sky.gif")
         self.addPlayer("Player 1",gameScreen,["Giga walk2.gif", "Giga walk3.gif", "Giga walk1.gif"],)
-        if self._settings.difficulty == "easy":
-            index=0
-            for i in range(3):
-                index+=1
-                ball = Ball(f"ball{index}.gif")
-                self.balls.append(ball)
-            print(self.balls)
-        if self._settings.difficulty == "medium":
-            index=0
-            for i in range(7):
-                index+=1
-                ball = Ball(f"ball{index}.gif")
-                self.balls.append(ball)
-            print(self.balls)
-        if self._settings.difficulty == "hard":
-            index=0 
-            for i in range(10):
-                index+=1
-                ball = Ball(f"ball{index}.gif")
-                self.balls.append(ball)
+        self.addBall(Ball(f"ball1.gif"))
         for player in self.players: player.draw()
         for ball in self.balls: ball.draw(gameScreen)
+        speed = -10
         while True:
-            await asyncio.gather(self.players[0].movement())
+            self.players[0].movement()
             for ball in self.balls:
                 ball.moveDown(gameScreen)
+            if (len(self.balls) != 3 and self._settings.difficulty == "easy"): 
+                speed += 1
+                self.addBall(Ball(f"ball1.gif").setSpeed(speed))
+            if (len(self.balls) != 7 and self._settings.difficulty == "medium"): 
+                speed += 1
+                self.addBall(Ball(f"ball1.gif").setSpeed(speed))
+            if (len(self.balls) != 10 and self._settings.difficulty == "hard"): 
+                speed += 1
+                self.addBall(Ball(f"ball1.gif").setSpeed(speed))
             gameScreen.update()
-            time.sleep(.1)
-        gameScreen.getMouse()
-        gameScreen.close()
+            time.sleep(.04)
     def settings(self):
         settingsScreen = GraphWin("Settings", 800, 500).zero().setImage("Settings page.gif")
         MUSIC_ON =Button(Point(-350, 150), Point(-300, 200), "ON", settingsScreen).setFontSize(15).draw()

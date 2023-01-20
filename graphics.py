@@ -245,7 +245,7 @@ class GraphWin(tk.Canvas):
         self.config(bg=color)
         self.__autoflush()
         return self
-    def setCoords(self, x1: int | float, y1: int | float, x2: int | float, y2: int | float):
+    def setCoords(self, x1: float, y1: float, x2: float, y2: float):
         """Set coordinates of window to run from (x1,y1) in the
         lower-left corner to (x2,y2) in the upper-right corner."""
         self.trans = Transform(self.width, self.height, x1, y1, x2, y2)
@@ -482,7 +482,7 @@ class GraphicsObject:
         pass  # must override in subclass
 
 class Point(GraphicsObject):
-    def __init__(self, x: int | float, y: int | float):
+    def __init__(self, x: float, y: float):
         GraphicsObject.__init__(self, ["outline", "fill"])
         self.setFill = self.setOutline
         self.x = float(x)
