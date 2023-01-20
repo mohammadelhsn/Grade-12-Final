@@ -147,12 +147,10 @@ class Player:
         player_adjustedX1 = playerx + (playerWidth / 2)
         player_adjustedX2 = playerx - (playerWidth / 2)
 
-        if (ball_adjustedY1 >= player_adjustedY1 and ball_adjustedY2 <= player_adjustedY2):
-            if (ball_adjustedX1 >= player_adjustedX1 and ball_adjustedX2 <= player_adjustedX2): 
-                return True
-            else: return False
-        return False
-
+        if (ball_adjustedY1 >= player_adjustedY1 and ball_adjustedY2 <= player_adjustedY2): 
+            if (ball_adjustedX1 >= player_adjustedX1 and ball_adjustedX2 <= player_adjustedX2): return True
+        if (ball_adjustedY1 >= player_adjustedY1 and ball_adjustedY2 >= player_adjustedY2): 
+            if (ball_adjustedX1 >= player_adjustedX1 and ball_adjustedX2 <= player_adjustedX2): return True
 
 class Ball:
     img: str
@@ -161,8 +159,7 @@ class Ball:
         self.img = img
         self.ball = Image(Point(random.randint(-350, 350), 250), self.img)
         self.speed = 0
-    def draw(self, screen: GraphWin):
-        self.ball.draw(screen)
+    def draw(self, screen: GraphWin): self.ball.draw(screen)
     def setSpeed(self, speed): 
         self.speed = speed
         return self
@@ -242,7 +239,12 @@ class Game:
                 self.addBall(Ball(f"ball1.gif").setSpeed(speed))
 
             for ball in self.balls: 
-                if (self.players[0].hasCollided(ball.ball.anchor.x, ball.ball.anchor.y, ball.ball.getHeight(), ball.ball.getWidth(), self.players[0].current.anchor.x, self.players[0].current.anchor.y, self.players[0].current.getHeight(), self.players[0].current.getWidth())): print(f"{ball.ball.id} has collided!")
+                if (self.players[0].hasCollided(ball.ball.anchor.x, ball.ball.anchor.y, ball.ball.getHeight(), ball.ball.getWidth(), self.players[0].current.anchor.x, self.players[0].current.anchor.y, self.players[0].current.getHeight(), self.players[0].current.getWidth())): 
+                    print(f"{ball.ball.id} has collided!")
+                    print(ball.ball.anchor.x)
+                    print(ball.ball.anchor.y)
+                    print(self.players[0].current.anchor.x)
+                    print(self.players[0].current.anchor.y)
             gameScreen.update()
             time.sleep(.04)
     def settings(self):
