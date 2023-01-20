@@ -71,6 +71,7 @@ class Player:
         self.win = win
         self.players = []
         self.lives = 0
+        self.current = self.player
 
         for img in self.playerFile:
             self.players.append(Image(Point(0,0), img))
@@ -93,12 +94,14 @@ class Player:
                     self.y = img.anchor.y
                     img.draw(self.win)
                     self.win.update()
+                    self.current = img
                     index += 1 
                     if (index == 3):
                         self.player.anchor.x = self.x
                         self.player.anchor.y = self.y
                         img.undraw()
                         self.player.draw(self.win)
+                        self.current = self.player
                         break
                     img.undraw()
                     continue             
@@ -118,6 +121,7 @@ class Player:
                         self.x = img.anchor.x
                         self.y = img.anchor.y
                         img.draw(self.win)
+                        self.current = img
                         self.win.update()
                         index += 1 
                         if (index == 3):
@@ -125,12 +129,29 @@ class Player:
                             self.player.anchor.y = self.y
                             img.undraw()
                             self.player.draw(self.win)
+                            self.current = self.player
                             break
                         img.undraw()
                         continue     
                 else:
                     index = 0
                     for i in range(4): self.player.move(3, 0)
+    def hasCollided(self, ballx, bally, ballHeight, ballWidth, playerx, playery, playerHeight, playerWidth): 
+        ball_adjustedY1 = bally + (ballHeight / 2)
+        ball_adjustedY2 = bally - (ballHeight/ 2)
+        ball_adjustedX1 = ballx + (ballWidth / 2)
+        ball_adjustedX2 = ballx - (ballWidth / 2)
+
+        player_adjustedY1 = playery + (playerHeight / 2)
+        player_adjustedY2 = playery - (playerHeight / 2)
+        player_adjustedX1 = playerx + (playerWidth / 2)
+        player_adjustedX2 = playerx - (playerWidth / 2)
+
+        if (ball_adjustedY1 >= player_adjustedY1 and ball_adjustedY2 <= player_adjustedY2):
+            if (ball_adjustedX1 >= player_adjustedX1 and ball_adjustedX2 <= player_adjustedX2): 
+                return True
+            else: return False
+        return False
 
 
 class Ball:
@@ -155,9 +176,6 @@ class Ball:
         else:
             if (self.speed): self.ball.move(0, self.speed)
             else: self.ball.move(0,-10)
-    def hasCollided(self, player: Player):
-        if (self.ball.anchor.x == player.player.anchor.x and self.ball.anchor.y == player.player.anchor.y): return True
-        else: return False
     
 
 class Game:
@@ -222,6 +240,9 @@ class Game:
             if (len(self.balls) != 10 and self._settings.difficulty == "hard"): 
                 speed += 1
                 self.addBall(Ball(f"ball1.gif").setSpeed(speed))
+
+            for ball in self.balls: 
+                if (self.players[0].hasCollided(ball.ball.anchor.x, ball.ball.anchor.y, ball.ball.getHeight(), ball.ball.getWidth(), self.players[0].current.anchor.x, self.players[0].current.anchor.y, self.players[0].current.getHeight(), self.players[0].current.getWidth())): print(f"{ball.ball.id} has collided!")
             gameScreen.update()
             time.sleep(.04)
     def settings(self):
