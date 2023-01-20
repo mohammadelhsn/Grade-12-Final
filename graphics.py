@@ -224,11 +224,18 @@ class GraphWin(tk.Canvas):
         self.closed = False
         master.lift()
         self.lastKey = ""
+        self.bind_all("<KeyPress>",   self._onKeyPress)
+        self.bind_all("<KeyRelease>", self._onKeyRelease)
+        self.keys = dict()
         if (autoflush):_root.update()
     def __repr__(self):
         if (self.isClosed()): return "<Closed GraphWin>"
         else: return "GraphWin('{}', {}, {})".format(self.master.title(), self.getWidth(), self.getHeight())
     def __str__(self): return repr(self)
+    def _onKeyPress(self, event):
+        self.keys[event.keysym] = True
+    def _onKeyRelease(self, event):
+        self.keys[event.keysym] = False
     def __checkOpen(self): 
         if (self.closed): raise GraphicsError("window is closed")
     def _onKey(self, evnt): self.lastKey = evnt.keysym

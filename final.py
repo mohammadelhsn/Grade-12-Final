@@ -7,7 +7,7 @@
 from winsound import PlaySound, SND_ASYNC, SND_FILENAME, SND_LOOP
 from typing import List
 from graphics import *
-import threading, random, time, os
+import threading, random, time, os, asyncio
 
 def setInterval(func, sec: int):
     def func_wrapper():
@@ -17,6 +17,7 @@ def setInterval(func, sec: int):
     t = threading.Timer(sec, func_wrapper)
     t.start()
     return t
+
 
 try: import requests
 except ModuleNotFoundError:
@@ -62,47 +63,93 @@ class Settings:
 
 class Player:
     playerName: str
-    playerFiles: List
+    playerFiles: List[str]
     def __init__(self, name: str, win: GraphWin, files: typing.List[str]) -> None:
         self.playerName = name
         self.playerFile = files
-        self.player = Image(Point(0, 0), files[0])
+        self.player = Image(Point(0, -210), files[2])
         self.win = win
+        self.players = []
+
+        for img in self.playerFile:
+            self.players.append(Image(Point(0,0), img))
     def draw(self): 
         self.player.draw(self.win)
         return self
-    def walkLeft(self):
-        if "Giga" in self.playerFiles[0]:
-            index = 0
-            for i in range(3): self.player.move(-4, 0)
-        else:
-            index = 0
-            for i in range(4): self.player.move(-3, 0)
-    def walkRight(self):
-        if "Giga" in self.playerFiles[0]:
-            index = 0
-            for i in range(3): self.player.move(4, 0)
-        else:
-            index = 0
-            for i in range(4): self.player.move(3, 0)
+
+    async def movement(self):
+        if self.win.keys.get("a"):
+            if ((self.player.anchor.x - 10) <= -400): return 
+            if "Giga" in self.playerFile[-2]:
+                index = 0
+                self.x = self.player.anchor.x
+                self.y = self.player.anchor.y
+                for img in self.players: 
+                    self.player.undraw()
+                    img.anchor.x = self.x -10
+                    img.anchor.y = self.y 
+                    self.x = img.anchor.x
+                    self.y = img.anchor.y
+                    img.draw(self.win)
+                    await asyncio.sleep(0.3)
+                    index += 1 
+                    if (index == 3):
+                        self.player.anchor.x = self.x
+                        self.player.anchor.y = self.y
+                        img.undraw()
+                        self.player.draw(self.win)
+                        break
+                    img.undraw()
+                    continue             
+            else:
+                index = 0
+                for i in range(4): self.player.move(-3, 0)
+        if (self.win.keys.get('d')):
+                if ((self.player.anchor.y + 10) >= 400): return 
+                if "Giga" in self.playerFile[0]:
+                    index = 0
+                    self.x = self.player.anchor.x
+                    self.y = self.player.anchor.y
+                    for img in self.players: 
+                        self.player.undraw()
+                        img.anchor.x = self.x + 10
+                        img.anchor.y = self.y 
+                        self.x = img.anchor.x
+                        self.y = img.anchor.y
+                        img.draw(self.win)
+                        await asyncio.sleep(0.3)
+                        index += 1 
+                        if (index == 3):
+                            self.player.anchor.x = self.x
+                            self.player.anchor.y = self.y
+                            img.undraw()
+                            self.player.draw(self.win)
+                            break
+                        img.undraw()
+                        continue     
+                else:
+                    index = 0
+                    for i in range(4): self.player.move(3, 0)
+        
 
 class Ball:
     img: str
     def __init__(self, img: str) -> None:
         self.img = img
-        self.ball = Image(Point(random.randint(-200, 200), 200), self.img)
+        self.ball = Image(Point(random.randint(-200, 200), 250), self.img)
     def draw(self, screen: GraphWin):
         self.ball.draw(screen)
-        while self.ball.anchor.y != -200:
-            self.ball.move(0, -5)
-            time.sleep(0.5)
-        self.ball.undraw()
-        self.ball.x = random.randint(-350, 350)
-        self.ball.y = 350
-        return self
+    def moveDown(self, screen):
+        if ((self.ball.anchor.y -10) <= -250):
+            self.ball.undraw()
+            self.ball.anchor.x = random.randint(-350, 350)
+            self.ball.anchor.y = 250
+            self.draw(screen)
+        else: self.ball.move(0, -10)
     def hasCollided(self, player: Player):
         if (self.ball.anchor.x == player.player.anchor.x and self.ball.anchor.y == player.player.anchor.y): return True
         else: return False
+    
 
 class Game:
     screen: str
@@ -143,28 +190,40 @@ class Game:
             if PLAY_BUTTON.clicked(pt):
                 PLAY_BUTTON.clickAnimation()
                 defaultScreen.close()
-                self.gameScreen()
+                asyncio.run(self.gameScreen())
                 break
         defaultScreen.close()
-    def gameScreen(self):
+    async def gameScreen(self):
         gameScreen = GraphWin("Game Screen", 800, 500).zero().setImage("Blue Sky.gif")
+        self.addPlayer("Player 1",gameScreen,["Giga walk2.gif", "Giga walk3.gif", "Giga walk1.gif"],)
+        if self._settings.difficulty == "easy":
+            index=0
+            for i in range(3):
+                index+=1
+                ball = Ball(f"ball{index}.gif")
+                self.balls.append(ball)
+            print(self.balls)
+        if self._settings.difficulty == "medium":
+            index=0
+            for i in range(7):
+                index+=1
+                ball = Ball(f"ball{index}.gif")
+                self.balls.append(ball)
+            print(self.balls)
+        if self._settings.difficulty == "hard":
+            index=0 
+            for i in range(10):
+                index+=1
+                ball = Ball(f"ball{index}.gif")
+                self.balls.append(ball)
+        for player in self.players: player.draw()
+        for ball in self.balls: ball.draw(gameScreen)
         while True:
-            self.addPlayer("Player 1",gameScreen,["Giga walk1.gif", "Giga walk2.gif", "Giga walk3.gif"],)
-            if self._settings.difficulty == "easy":
-                for i in range(3):
-                    ball = Ball("ball.gif")
-                    self.balls.append(ball)
-            if self._settings.difficulty == "medium":
-                for i in range(7):
-                    ball = Ball("ball.gif")
-                    self.balls.append(ball)
-            if self._settings.difficulty == "hard":
-                for i in range(10):
-                    ball = Ball("ball.gif")
-                    self.balls.append(ball)
-            for player in self.players: player.draw()
-            for ball in self.balls: ball.draw(gameScreen)
-            break
+            await asyncio.gather(self.players[0].movement())
+            for ball in self.balls:
+                ball.moveDown(gameScreen)
+            gameScreen.update()
+            time.sleep(.1)
         gameScreen.getMouse()
         gameScreen.close()
     def settings(self):
@@ -263,7 +322,7 @@ class Game:
                 EASY.deactivate()
                 MEDIUM.deactivate()
             continue
-    def instructions(self):
+    def instructions(self): 
         instructionsScreen = GraphWin("Instructions", 800, 500).zero().setImage("Settings page.gif")
         instructionsScreen.getMouse()
         instructionsScreen.close()
