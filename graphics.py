@@ -164,15 +164,12 @@ import time, os, sys, typing
 try: import tkinter as tk
 except: import Tkinter as tk
 
-
 ##########################################################################
 # Module Exceptions
-
 
 class GraphicsError(Exception):
     """Generic error class for graphics module exceptions."""
     pass
-
 
 OBJ_ALREADY_DRAWN = "Object currently drawn"
 UNSUPPORTED_METHOD = "Object doesn't support operation"
@@ -534,10 +531,23 @@ class Rectangle(_BBox):
         x2, y2 = canvas.toScreen(p2.x, p2.y)
         return canvas.create_rectangle(x1, y1, x2, y2, options)
     def clone(self):
+        """Clone the rectangle
+
+        Returns:
+            Rectangle: A copy rectangle.
+        """
         other = Rectangle(self.p1, self.p2)
         other.config = self.config.copy()
         return other
     def clicked(self, click: Point) -> bool:
+        """Check if the rectangle was clicked
+
+        Args:
+            click (Point): The click
+
+        Returns:
+            bool: Whether the rectangle was clicked.
+        """
         P1: Point = self.getP1()
         P2: Point = self.getP2()
         if (P1.x >= 0):
@@ -563,6 +573,11 @@ class Oval(_BBox):
     def __init__(self, p1: Point, p2: Point): _BBox.__init__(self, p1, p2)
     def __repr__(self): return "Oval({}, {})".format(str(self.p1), str(self.p2))
     def clone(self):
+        """Create a clone
+
+        Returns:
+            Oval: A clone oval
+        """
         other = Oval(self.p1, self.p2)
         other.config = self.config.copy()
         return other
