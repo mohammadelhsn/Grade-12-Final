@@ -250,12 +250,14 @@ class GraphWin(tk.Canvas):
         lower-left corner to (x2,y2) in the upper-right corner."""
         self.trans = Transform(self.width, self.height, x1, y1, x2, y2)
         self.redraw()
+        return self
     def close(self):
         """Close the window"""
         if (self.closed): return
         self.closed = True
         self.master.destroy()
         self.__autoflush()
+        return self
     def isClosed(self) -> bool:
         """Check if window is closed"""
         return self.closed
@@ -322,10 +324,10 @@ class GraphWin(tk.Canvas):
         key = self.lastKey
         self.lastKey = ""
         return key
-    def getHeight(self):
+    def getHeight(self) -> int:
         """Return the height of the window"""
         return self.height
-    def getWidth(self):
+    def getWidth(self) -> int:
         """Return the width of the window"""
         return self.width
     def toScreen(self, x, y):
@@ -444,6 +446,7 @@ class GraphicsObject:
             if (self.canvas.autoflush): _root.update()
         self.canvas = None
         self.id = None
+        return self
     def isDrawn(self):
         if not self.canvas: False
         else: return True
@@ -498,8 +501,8 @@ class Point(GraphicsObject):
         other = Point(self.x, self.y)
         other.config = self.config.copy()
         return other
-    def getX(self): return self.x
-    def getY(self): return self.y
+    def getX(self) -> float: return self.x
+    def getY(self) -> float: return self.y
 
 class _BBox(GraphicsObject):
     # Internal base class for objects represented by bounding box
@@ -534,7 +537,7 @@ class Rectangle(_BBox):
         other = Rectangle(self.p1, self.p2)
         other.config = self.config.copy()
         return other
-    def clicked(self, click: Point):
+    def clicked(self, click: Point) -> bool:
         P1: Point = self.getP1()
         P2: Point = self.getP2()
         if (P1.x >= 0):
@@ -581,7 +584,7 @@ class Circle(Oval):
         other = Circle(self.getCenter(), self.radius)
         other.config = self.config.copy()
         return other
-    def getRadius(self): return self.radius
+    def getRadius(self) -> int: return self.radius
 
 class Line(_BBox):
     def __init__(self, p1: Point, p2: Point):
@@ -602,6 +605,7 @@ class Line(_BBox):
     def setArrow(self, option: typing.Literal["first", "last", "both", "none"]):
         if (not option in ["first", "last", "both", "none"]): raise GraphicsError(BAD_OPTION)
         self._reconfig("arrow", option)
+        return self
 
 class Polygon(GraphicsObject):
     def __init__(self, *points: Point):
@@ -614,7 +618,7 @@ class Polygon(GraphicsObject):
         other = Polygon(*self.points)
         other.config = self.config.copy()
         return other
-    def getPoints(self): return list(map(Point.clone, self.points))
+    def getPoints(self) -> typing.List[Point]: return list(map(Point.clone, self.points))
     def _move(self, dx, dy):
         for p in self.points: p.move(dx, dy)
     def _draw(self, canvas, options):
@@ -639,15 +643,15 @@ class Text(GraphicsObject):
         x, y = canvas.toScreen(p.x, p.y)
         return canvas.create_text(x, y, options)
     def _move(self, dx, dy): self.anchor.move(dx, dy)
-    def clone(self):
+    def clone(self) -> Point:
         other = Text(self.anchor, self.config["text"])
         other.config = self.config.copy()
         return other
     def setText(self, text: str):
         self._reconfig("text", text)
         return self
-    def getText(self): return self.config["text"]
-    def getAnchor(self): return self.anchor.clone()
+    def getText(self) -> str: return self.config["text"]
+    def getAnchor(self) -> Point: return self.anchor.clone()
     def setFace(self, face: typing.Literal["helvetica", "arial", "courier", "times roman"]):
         if (face in ["helvetica", "arial", "courier", "times roman"]):
             f, s, b = self.config["font"]
@@ -699,9 +703,9 @@ class Entry(GraphicsObject):
         # self.setFill(self.fill)
         self.entry.focus_set()
         return canvas.create_window(x, y, window=frm)
-    def getText(self): return self.text.get()
+    def getText(self) -> str: return self.text.get()
     def _move(self, dx, dy): self.anchor.move(dx, dy)
-    def getAnchor(self): return self.anchor.clone()
+    def getAnchor(self) -> Point: return self.anchor.clone()
     def clone(self):
         other = Entry(self.anchor, self.width)
         other.config = self.config.copy()
@@ -740,14 +744,14 @@ class Entry(GraphicsObject):
 
 class Image(GraphicsObject):
     idCount = 0
-    imageCache = {}  # tk photoimages go here to avoid GC while drawn
+    imageCache = {}  
     def __init__(self, p: Point, *pixmap):
         GraphicsObject.__init__(self, [])
         self.anchor = p.clone()
         self.imageId = Image.idCount
         Image.idCount = Image.idCount + 1
         if (len(pixmap) == 1): self.img = tk.PhotoImage(file=pixmap[0], master=_root)
-        else:  # width and height provided
+        else:
             width, height = pixmap
             self.img = tk.PhotoImage(master=_root, width=width, height=height)
     def __repr__(self): return "Image({}, {}, {})".format(self.anchor, self.getWidth(), self.getHeight())
@@ -785,6 +789,7 @@ class Image(GraphicsObject):
     def setPixel(self, x: float, y: float, color: str):
         """Sets pixel (x,y) to the given color"""
         self.img.put("{" + color + "}", (x, y))
+        return self
     def save(self, filename: str):
         """Saves the pixmap image to filename.
         The format for the save image is determined from the filname extension.
@@ -792,6 +797,7 @@ class Image(GraphicsObject):
         path, name = os.path.split(filename)
         ext = name.split(".")[-1]
         self.img.write(filename, format=ext)
+        return self
 
 def color_rgb(r, g, b):
     """r,g,b are intensities of red, green, and blue in range(256)
@@ -799,15 +805,75 @@ def color_rgb(r, g, b):
     return "#%02x%02x%02x" % (r, g, b)
 
 class Button:
+    """Button class developed by @mohammadelhsn
+    """
+    win: GraphWin
     def __init__(self, p1: Point, p2: Point, text: str, win=None):
+        """Instantiate a button object
+
+        Args:
+            p1 (Point): Point 1 for the rectangle. 
+            p2 (Point): Point 2 for the rectangle.
+            text (str): Text for the button
+            win (GraphWin, optional): The window to draw with. Defaults to None.
+        """
         self.p1 = p1
         self.p2 = p2
         self.win = win
         self.rectangle = Rectangle(p1, p2)
         self.text = Text(self.rectangle.getCenter(), text)
         self.clicked = self.rectangle.clicked
+        self.setTextColor = self.setTextColour
     def setFontSize(self, size: int):
+        """Sets the font size for the button
+
+        Args:
+            size (int): The font size for the button 
+
+        Returns:
+            Self@Button: Returns self for chaining :)
+        """
         self.text.setSize(size)
+        return self
+    def getCenter(self) -> Point : 
+        """Get the center of the rectangle
+
+        Returns:
+            Point: Returns the center point
+        """
+        return self.rectangle.getCenter()
+    def getP1(self) -> Point: 
+        """Get P1 of the rectangle
+
+        Returns:
+            Point: Graphics.py Point object
+        """
+        return self.rectangle.p1
+    def getP2(self) -> Point:
+        """Get P2 of the rectangle.
+
+        Returns:
+            Point: Graphics.py Point object
+        """
+        return self.rectangle.p2
+    def setButtonFill(self, colour: str): 
+        """Set the fill of the button
+
+        Args:
+            colour (str): Supported colour
+
+        Returns:
+            Self@Button: Returns self for chaining :)
+        """
+        self.rectangle.setFill(colour)
+        return self
+    def setTextColour(self, colour: str): 
+        self.text.setTextColor(colour)
+        return self
+    def getText(self): 
+        return self.text.getText()
+    def setText(self, newText): 
+        self.text.setText(newText)
         return self
     def setWin(self, win: GraphWin):
         self.win = win
@@ -820,11 +886,11 @@ class Button:
         self.rectangle.undraw()
         self.text.undraw()
         return self
-    def activate(self):
-        self.rectangle.setFill("orange")
+    def activate(self, colour="orange"):
+        self.rectangle.setFill(colour)
         return self
-    def deactivate(self):
-        self.rectangle.setFill("")
+    def deactivate(self, colour=""):
+        self.rectangle.setFill(colour)
         return self
     def clickAnimation(self):
         self.activate()
