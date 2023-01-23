@@ -38,7 +38,7 @@ class Music:
         """
         Instantiate the music class
         """
-        self.enabled = False
+        self.enabled = False 
         self.song = ""
     def isEnabled(self) -> typing.Literal["ON", "OFF"]:
         """Returns if the music is currently enabled
