@@ -62,28 +62,34 @@ http://mcsp.wartburg.edu/zelle/python for a quick reference"""
 
 __version__ = "5.0"
 
-# Version 5 8/26/2016
+# ! This is a modified version of graphics.py !
+# ! Modifications - @mohammadelhsn
+#     * Added a Button class, with working methods
+#     * Added a clicked method for the rectangle 
+#     * Added some type definitions for modern use in modern code editors.
+#     * Added some comments where possible for easier understanding for new programmers.
+#     * As a Visual Studio Code users myself, this should definitely help many new programmers.
+#     * ENJOY!!! 
+# ! Version 5 8/26/2016
 #     * update at bottom to fix MacOS issue causing askopenfile() to hang
 #     * update takes an optional parameter specifying update rate
 #     * Entry objects get focus when drawn
 #     * __repr_ for all objects
 #     * fixed offset problem in window, made canvas borderless
-
-# Version 4.3 4/25/2014
+# ! Version 4.3 4/25/2014
 #     * Fixed Image getPixel to work with Python 3.4, TK 8.6 (tuple type handling)
 #     * Added interactive keyboard input (getKey and checkKey) to GraphWin
 #     * Modified setCoords to cause redraw of current objects, thus
 #       changing the view. This supports scrolling around via setCoords.
-#
-# Version 4.2 5/26/2011
+# ! Version 4.2 5/26/2011
 #     * Modified Image to allow multiple undraws like other GraphicsObjects
-# Version 4.1 12/29/2009
+# ! Version 4.1 12/29/2009
 #     * Merged Pixmap and Image class. Old Pixmap removed, use Image.
-# Version 4.0.1 10/08/2009
+# ! Version 4.0.1 10/08/2009
 #     * Modified the autoflush on GraphWin to default to True
 #     * Autoflush check on close, setBackground
 #     * Fixed getMouse to flush pending clicks at entry
-# Version 4.0 08/2009
+# ! Version 4.0 08/2009
 #     * Reverted to non-threaded version. The advantages (robustness,
 #         efficiency, ability to use with other Tk code, etc.) outweigh
 #         the disadvantage that interactive use with IDLE is slightly more
@@ -92,73 +98,68 @@ __version__ = "5.0"
 #     * Added Image.getPixmap()
 #     * Added update() -- stand alone function to cause any pending
 #           graphics changes to display.
-#
-# Version 3.4 10/16/07
-#     Fixed GraphicsError to avoid "exploded" error messages.
-# Version 3.3 8/8/06
-#     Added checkMouse method to GraphWin
-# Version 3.2.3
-#     Fixed error in Polygon init spotted by Andrew Harrington
-#     Fixed improper threading in Image constructor
-# Version 3.2.2 5/30/05
-#     Cleaned up handling of exceptions in Tk thread. The graphics package
-#     now raises an exception if attempt is made to communicate with
-#     a dead Tk thread.
-# Version 3.2.1 5/22/05
-#     Added shutdown function for tk thread to eliminate race-condition
+# ! Version 3.4 10/16/07
+#     * Fixed GraphicsError to avoid "exploded" error messages.
+# ! Version 3.3 8/8/06
+#     * Added checkMouse method to GraphWin
+# ! Version 3.2.3
+#     * Fixed error in Polygon init spotted by Andrew Harrington
+#     * Fixed improper threading in Image constructor
+# ! Version 3.2.2 5/30/05
+#     * Cleaned up handling of exceptions in Tk thread. The graphics package
+#       now raises an exception if attempt is made to communicate with
+#       a dead Tk thread.
+# ! Version 3.2.1 5/22/05
+#     * Added shutdown function for tk thread to eliminate race-condition
 #        error "chatter" when main thread terminates
-#     Renamed various private globals with _
-# Version 3.2 5/4/05
-#     Added Pixmap object for simple image manipulation.
-# Version 3.1 4/13/05
-#     Improved the Tk thread communication so that most Tk calls
-#        do not have to wait for synchonization with the Tk thread.
-#        (see _tkCall and _tkExec)
-# Version 3.0 12/30/04
-#     Implemented Tk event loop in separate thread. Should now work
-#        interactively with IDLE. Undocumented autoflush feature is
-#        no longer necessary. Its default is now False (off). It may
-#        be removed in a future version.
-#     Better handling of errors regarding operations on windows that
+#     * Renamed various private globals with _
+# ! Version 3.2 5/4/05
+#     * Added Pixmap object for simple image manipulation.
+# ! Version 3.1 4/13/05
+#     * Improved the Tk thread communication so that most Tk calls
+#         do not have to wait for synchonization with the Tk thread.
+#         (see _tkCall and _tkExec)
+# ! Version 3.0 12/30/04
+#     * Implemented Tk event loop in separate thread. Should now work
+#         interactively with IDLE. Undocumented autoflush feature is
+#         no longer necessary. Its default is now False (off). It may
+#         be removed in a future version.
+#     * Better handling of errors regarding operations on windows that
 #       have been closed.
-#     Addition of an isClosed method to GraphWindow class.
-
-# Version 2.2 8/26/04
-#     Fixed cloning bug reported by Joseph Oldham.
-#     Now implements deep copy of config info.
-# Version 2.1 1/15/04
-#     Added autoflush option to GraphWin. When True (default) updates on
-#        the window are done after each action. This makes some graphics
-#        intensive programs sluggish. Turning off autoflush causes updates
-#        to happen during idle periods or when flush is called.
-# Version 2.0
-#     Updated Documentation
-#     Made Polygon accept a list of Points in constructor
-#     Made all drawing functions call TK update for easier animations
+#     * Addition of an isClosed method to GraphWindow class.
+# ! Version 2.2 8/26/04
+#     * Fixed cloning bug reported by Joseph Oldham.
+#     * Now implements deep copy of config info.
+# ! Version 2.1 1/15/04
+#     * Added autoflush option to GraphWin. When True (default) updates on
+#         the window are done after each action. This makes some graphics
+#         intensive programs sluggish. Turning off autoflush causes updates
+#         to happen during idle periods or when flush is called.
+# ! Version 2.0
+#     * Updated Documentation
+#     * Made Polygon accept a list of Points in constructor
+#     * Made all drawing functions call TK update for easier animations
 #          and to make the overall package work better with
 #          Python 2.3 and IDLE 1.0 under Windows (still some issues).
-#     Removed vestigial turtle graphics.
-#     Added ability to configure font for Entry objects (analogous to Text)
-#     Added setTextColor for Text as an alias of setFill
-#     Changed to class-style exceptions
-#     Fixed cloning of Text objects
-
-# Version 1.6
-#     Fixed Entry so StringVar uses _root as master, solves weird
+#     * Removed vestigial turtle graphics.
+#     * Added ability to configure font for Entry objects (analogous to Text)
+#     * Added setTextColor for Text as an alias of setFill
+#     * Changed to class-style exceptions
+#     * Fixed cloning of Text objects
+# ! Version 1.6
+#     * Fixed Entry so StringVar uses _root as master, solves weird
 #            interaction with shell in Idle
-#     Fixed bug in setCoords. X and Y coordinates can increase in
+#     * Fixed bug in setCoords. X and Y coordinates can increase in
 #           "non-intuitive" direction.
-#     Tweaked wm_protocol so window is not resizable and kill box closes.
-
-# Version 1.5
-#     Fixed bug in Entry. Can now define entry before creating a
-#     GraphWin. All GraphWins are now toplevel windows and share
-#     a fixed root (called _root).
-
-# Version 1.4
-#     Fixed Garbage collection of Tkinter images bug.
-#     Added ability to set text atttributes.
-#     Added Entry boxes.
+#     * Tweaked wm_protocol so window is not resizable and kill box closes.
+# ! Version 1.5
+#     * Fixed bug in Entry. Can now define entry before creating a
+#     * GraphWin. All GraphWins are now toplevel windows and share
+#     * a fixed root (called _root).
+# ! Version 1.4
+#     * Fixed Garbage collection of Tkinter images bug.
+#     * Added ability to set text atttributes.
+#     * Added Entry boxes.
 
 import time, os, sys, typing
 try: import tkinter as tk
@@ -542,6 +543,8 @@ class Rectangle(_BBox):
     def clicked(self, click: Point) -> bool:
         """Check if the rectangle was clicked
 
+        Author: @mohammadelhsn
+
         Args:
             click (Point): The click
 
@@ -820,7 +823,9 @@ def color_rgb(r, g, b):
     return "#%02x%02x%02x" % (r, g, b)
 
 class Button:
-    """Button class developed by @mohammadelhsn
+    """
+    Button class developed by @mohammadelhsn
+    Clicked function in the rectangle was also developed by me :)
     """
     win: GraphWin
     def __init__(self, p1: Point, p2: Point, text: str, win=None):
@@ -840,13 +845,21 @@ class Button:
         self.clicked = self.rectangle.clicked
         self.setTextColor = self.setTextColour
     def setFontSize(self, size: int):
-        """Sets the font size for the button
+        """
+        Set the font size for the button's text.
+
+        This method adjusts the font size of the text displayed on the button.
 
         Args:
-            size (int): The font size for the button 
+            size (int): The desired font size for the button's text.
 
         Returns:
-            Self@Button: Returns self for chaining :)
+            Self@Button: Returns the Button instance for chaining method calls.
+
+        Example:
+            button = Button(Point(50, 50), Point(150, 100), "Click me")
+            button.setFontSize(14).draw()
+        -------------------------------------------------------
         """
         self.text.setSize(size)
         return self
@@ -883,6 +896,23 @@ class Button:
         self.rectangle.setFill(colour)
         return self
     def setTextColour(self, colour: str): 
+        """
+        Set the text color of the button.
+
+        This method changes the color of the text displayed on the button.
+
+        Args:
+            colour (str): The desired color for the text. 
+                        Supported color names can be used.
+
+        Returns:
+            Self@Button: Returns the Button instance for chaining method calls.
+
+        Example:
+            button = Button(Point(50, 50), Point(150, 100), "Click me")
+            button.setTextColour("blue").draw()
+        -------------------------------------------------------
+        """    
         self.text.setTextColor(colour)
         return self
     def getText(self): 
@@ -908,9 +938,36 @@ class Button:
         self.rectangle.setFill(colour)
         return self
     def clickAnimation(self):
+        """
+        Perform a click animation for the button.
+
+        This method activates the button briefly, simulating a visual feedback
+        for a button click. It changes the button's color, pauses briefly, and
+        then deactivates the button.
+
+        Returns:
+            Self@Button: Returns the Button instance for chaining method calls.
+
+        Example:
+            button = Button(Point(50, 50), Point(150, 100), "Click me")
+            button.clickAnimation().draw()
+        -------------------------------------------------------
+        """
+        
+        # Activate the button
+
         self.activate()
+
+        # Wait .3 seconds.
+
         time.sleep(0.3)
+
+        # Turn it off 
+
         self.deactivate()
+
+        # Return self for chaining.
+
         return self
 
 def clickAnimation(rectangle: Rectangle):

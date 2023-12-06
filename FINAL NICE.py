@@ -4,6 +4,9 @@
 # Date Created:01/16/2023
 # Date Modified:01/16/2023
 #############################################################################
+
+# Imports
+
 from winsound import PlaySound, SND_ASYNC, SND_FILENAME, SND_LOOP
 from typing import List
 from graphics import *
@@ -11,6 +14,7 @@ import random, time, os
 
 # Try importing requests
 # If requests isn't installed, install it and then import it
+
 try: import requests
 except ModuleNotFoundError:
     os.system("pip install requests")
@@ -18,6 +22,7 @@ except ModuleNotFoundError:
 
 # Try importing TTS module
 # If the module isn't installed, install it and then import it
+
 try: import pyttsx3
 except ModuleNotFoundError:
     os.system("pip install pyttsx3")
@@ -25,6 +30,7 @@ except ModuleNotFoundError:
 
 # Try importing playsound for sound effects
 # If the module isn't installed, install it and then import it. Install the 1.2.2 version because latest version doesn't work
+
 try: from playsound import playsound
 except ModuleNotFoundError:
     os.system("pip install playsound==1.2.2")
@@ -664,7 +670,8 @@ class Game:
 
                 # If there are no results, return 
 
-                if len(data) == 1: print("No result(s) found! Please try a different song!")
+                if (len(data) == 1): 
+                    print("No result(s) found! Please try a different song!")
 
                 # If there are results, save the results and play the song using winsound
 
@@ -683,7 +690,7 @@ class Game:
 
             # If the easy button is clicked, set the difficulty for the game to easy
 
-            if EASY.clicked(pt):
+            if (EASY.clicked(pt)):
                 EASY.clickAnimation()
                 playsound("click.wav", block=False)
                 self._settings.updateDifficulty("easy")
@@ -693,7 +700,7 @@ class Game:
 
             # If the medium button is clicked, set the difficulty for the game to medium
 
-            if MEDIUM.clicked(pt):
+            if (MEDIUM.clicked(pt)):
                 MEDIUM.clickAnimation()
                 playsound("click.wav", block=False)
                 self._settings.updateDifficulty("medium")
@@ -703,7 +710,7 @@ class Game:
 
             # If the hard button is clicked, set the difficulty for the game to hard
 
-            if HARD.clicked(pt):
+            if (HARD.clicked(pt)):
                 HARD.clickAnimation()
                 playsound("click.wav", block=False)
                 self._settings.updateDifficulty("hard")
@@ -720,11 +727,11 @@ class Game:
 
         instructionsScreen = GraphWin("Instructions", 800, 500).zero().setImage("Settings page.gif")
 
-        # Define a buton for the user to return to the main screen 
+        # Define a button for the user to return to the main screen 
 
         BACK = Button(Point(-50, -150), Point(50, -200), "BACK", instructionsScreen).draw()
 
-        # Draw the isntructions to the screen
+        # Draw the instructions to the screen
 
         Text(Point(0, 100),"The goal of this game is to dodge the balls that fall down. In each game mode, you have 3 lives.",).draw(instructionsScreen)
         Text(Point(0, 50),"In easy mode,there are 3 balls. In medium difficulty there are 5. And lastly, in hard mode there are 10 balls.",).draw(instructionsScreen)
@@ -741,11 +748,20 @@ class Game:
                 instructionsScreen.close()
                 break
             continue
+
 # Since this is a while loop, a new class is made each time therefore losing all the settings and score that were previously there
 # Using this method, we can pass in the score and settings if they exist
 
+# Define the score. 
+
 score = 0
+
+# Define the settings
+
 settings = None
+
+# Keep the game going indefinitely. 
+
 while True:
     game = Game(score=score, settings=settings)
     res = game.defaultScreen()
